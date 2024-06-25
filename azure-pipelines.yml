@@ -3,8 +3,6 @@ trigger:
 
 pool:
   name: 'Default' 
-  demands:
-    - agent.name -equals yossi-agent
 jobs:
 - job: Build
   displayName: 'Build job'
