@@ -2,9 +2,9 @@ trigger:
 - main
 
 pool:
-  vmImage: 'ubuntu-latest'
-  maxParallel: 1
-
+  name: 'Default' 
+  demands:
+    - agent.name -equals yossi-agent
 jobs:
 - job: Build
   displayName: 'Build job'
