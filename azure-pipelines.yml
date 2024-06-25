@@ -55,3 +55,4 @@ jobs:
       vstsFeedPublish: 'fb34e676-860d-42fb-b174-75c46291e03f/954a6374-e3f9-4513-881c-4489225f54b4'
       vstsFeedPackagePublish: 'random'
       versionOption: 'patch'
+      patvar: 'PAT' 
