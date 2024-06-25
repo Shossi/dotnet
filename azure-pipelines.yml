@@ -2,7 +2,8 @@ trigger:
 - main
 
 pool:
-  name: 'Default' 
+  name: 'Default'
+
 jobs:
 - job: Build
   displayName: 'Build job'
@@ -10,11 +11,17 @@ jobs:
   - task: UseDotNet@2
     inputs:
       packageType: 'sdk'
-      version: '8.x'
+      version: '8.0.100-preview.1'  # Replace with the correct preview version
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
-  - script: dotnet build
+
+  - script: dotnet build -c Release -o $(Build.ArtifactStagingDirectory)
     displayName: 'Build project'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'drop'
 
 - job: Test
   displayName: 'Test job'
@@ -27,7 +34,17 @@ jobs:
   displayName: 'Publish job'
   dependsOn: Test
   steps:
-  - task: PublishBuildArtifacts@1
+  - task: DownloadPipelineArtifact@2
     inputs:
-      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      ArtifactName: 'drop'
+      artifact: 'drop'
+      path: '$(Pipeline.Workspace)/drop'
+
+  - task: UniversalPackages@0
+    inputs:
+      command: 'publish'
+      publishDirectory: '$(Pipeline.Workspace)/drop'
+      feedsToUse: 'internal'
+      vstsFeedPublish: 'yossi' 
+      packageName: 'helloworld' 
+      versionOption: 'custom'
+      versionPublish: '1.0.$(Build.BuildId)' 
