@@ -43,7 +43,7 @@ jobs:
       command: 'publish'
       publishDirectory: '$(Pipeline.Workspace)/drop'
       feedsToUse: 'internal'
-      vstsFeedPublish: '<your-feed-name>'  # Replace with your feed name
-      packageName: 'your-package-name'  # Replace with your package name
+      vstsFeedPublish: 'yossi' 
+      packageName: 'helloworld' 
       versionOption: 'custom'
-      versionPublish: '1.0.$(Build.BuildId)'  # Replace with your versioning strategy
+      versionPublish: '1.0.$(Build.BuildId)' 
