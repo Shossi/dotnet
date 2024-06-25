@@ -11,8 +11,9 @@ jobs:
   - task: UseDotNet@2
     inputs:
       packageType: 'sdk'
-      version: '8.x'
+      version: '8.0.100-preview.1'  # Replace with the correct preview version
       installationPath: $(Agent.ToolsDirectory)/dotnet
+
 
   - script: dotnet build -c Release -o $(Build.ArtifactStagingDirectory)
     displayName: 'Build project'
