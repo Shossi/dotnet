@@ -2,7 +2,8 @@ trigger:
 - main
 
 pool:
-  name: 'Default' 
+  name: 'Default'
+
 jobs:
 - job: Build
   displayName: 'Build job'
@@ -13,8 +14,13 @@ jobs:
       version: '8.x'
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
-  - script: dotnet build
+  - script: dotnet build -c Release -o $(Build.ArtifactStagingDirectory)
     displayName: 'Build project'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'drop'
 
 - job: Test
   displayName: 'Test job'
@@ -27,7 +33,17 @@ jobs:
   displayName: 'Publish job'
   dependsOn: Test
   steps:
-  - task: PublishBuildArtifacts@1
+  - task: DownloadPipelineArtifact@2
     inputs:
-      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      ArtifactName: 'drop'
+      artifact: 'drop'
+      path: '$(Pipeline.Workspace)/drop'
+
+  - task: UniversalPackages@0
+    inputs:
+      command: 'publish'
+      publishDirectory: '$(Pipeline.Workspace)/drop'
+      feedsToUse: 'internal'
+      vstsFeedPublish: '<your-feed-name>'  # Replace with your feed name
+      packageName: 'your-package-name'  # Replace with your package name
+      versionOption: 'custom'
+      versionPublish: '1.0.$(Build.BuildId)'  # Replace with your versioning strategy
