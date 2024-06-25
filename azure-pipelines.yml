@@ -14,13 +14,13 @@ jobs:
       version: '8.x' 
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
-  - task: SonarQubePrepare@4
-    condition: eq(variables['Build.SourceBranchName'], 'feature/sonarqube')  # Run only on 'feature/sonarqube' branch
-    inputs:
-      SonarQube: 'SonarQubeConnection'  # Replace with your actual service connection name
-      scannerMode: 'MSBuild'
-      projectKey: 'your-project-key'  # Replace with your SonarQube project key
-      projectName: 'your-project-name'
+  # - task: SonarQubePrepare@4
+  #   condition: eq(variables['Build.SourceBranchName'], 'feature/sonarqube')  # Run only on 'feature/sonarqube' branch
+  #   inputs:
+  #     SonarQube: 'SonarQubeConnection'  # Replace with your actual service connection name
+  #     scannerMode: 'MSBuild'
+  #     projectKey: 'your-project-key'  # Replace with your SonarQube project key
+  #     projectName: 'your-project-name'
 
   - script: dotnet build -c Release -o $(Build.ArtifactStagingDirectory)
     displayName: 'Build project'
