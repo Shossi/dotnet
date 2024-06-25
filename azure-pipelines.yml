@@ -44,7 +44,7 @@ jobs:
       command: 'publish'
       publishDirectory: '$(Pipeline.Workspace)/drop'
       feedsToUse: 'internal'
-      vstsFeedPublish: 'yossi' 
+      vstsFeedPublish: 'https://pkgs.dev.azure.com/yossizxc/bonji/_packaging/yossi/nuget/v3/index.json'  # Full feed URL 
       packageName: 'helloworld' 
       versionOption: 'custom'
       versionPublish: '1.0.$(Build.BuildId)' 
