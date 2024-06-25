@@ -39,13 +39,19 @@ jobs:
       artifact: 'drop'
       path: '$(Pipeline.Workspace)/drop'
 
+  # - task: UniversalPackages@0
+  #   inputs:
+  #     command: 'download'
+  #     downloadDirectory: '$(System.DefaultWorkingDirectory)'
+  #     feedsToUse: 'internal'
+  #     vstsFeed: 'fb34e676-860d-42fb-b174-75c46291e03f/954a6374-e3f9-4513-881c-4489225f54b4'
+  #     vstsPackageVersion: '1.0.$(Build.BuildId)'
+  
   - task: UniversalPackages@0
     inputs:
       command: 'publish'
-      publishDirectory: '$(Pipeline.Workspace)/drop'
-      feedsToUse: 'internal'
-      vstsFeedPublish: 'https://pkgs.dev.azure.com/yossizxc/bonji/_packaging/yossi/nuget/v3/index.json'  # Full feed URL 
-      packageName: 'helloworld' 
-      versionOption: 'custom'
-      versionPublish: '1.0.$(Build.BuildId)' 
-      patvar: 'PAT'
+      publishDirectory: '$(Build.ArtifactStagingDirectory)'
+      feedsToUsePublish: 'internal'
+      vstsFeedPublish: 'fb34e676-860d-42fb-b174-75c46291e03f/954a6374-e3f9-4513-881c-4489225f54b4'
+      vstsFeedPackagePublish: 'random'
+      versionOption: 'patch'
