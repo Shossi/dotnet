@@ -1,0 +1,14 @@
+/home/yossi/desktop/git/devops/dotnet/bin/Debug/net8.0/dotnet
+/home/yossi/desktop/git/devops/dotnet/bin/Debug/net8.0/dotnet.deps.json
+/home/yossi/desktop/git/devops/dotnet/bin/Debug/net8.0/dotnet.runtimeconfig.json
+/home/yossi/desktop/git/devops/dotnet/bin/Debug/net8.0/dotnet.dll
+/home/yossi/desktop/git/devops/dotnet/bin/Debug/net8.0/dotnet.pdb
+/home/yossi/desktop/git/devops/dotnet/obj/Debug/net8.0/dotnet.GeneratedMSBuildEditorConfig.editorconfig
+/home/yossi/desktop/git/devops/dotnet/obj/Debug/net8.0/dotnet.AssemblyInfoInputs.cache
+/home/yossi/desktop/git/devops/dotnet/obj/Debug/net8.0/dotnet.AssemblyInfo.cs
+/home/yossi/desktop/git/devops/dotnet/obj/Debug/net8.0/dotnet.csproj.CoreCompileInputs.cache
+/home/yossi/desktop/git/devops/dotnet/obj/Debug/net8.0/dotnet.dll
+/home/yossi/desktop/git/devops/dotnet/obj/Debug/net8.0/refint/dotnet.dll
+/home/yossi/desktop/git/devops/dotnet/obj/Debug/net8.0/dotnet.pdb
+/home/yossi/desktop/git/devops/dotnet/obj/Debug/net8.0/dotnet.genruntimeconfig.cache
+/home/yossi/desktop/git/devops/dotnet/obj/Debug/net8.0/ref/dotnet.dll
