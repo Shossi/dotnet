@@ -22,6 +22,16 @@ jobs:
   #     projectKey: 'your-project-key'  # Replace with your SonarQube project key
   #     projectName: 'your-project-name'
 
+  - script: |
+    dotnet pack --configuration Release --output $(Build.ArtifactStagingDirectory)
+  displayName: 'Create NuGet package'
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranchName'], 'feature/'))
+
+- script: |
+    dotnet nuget push "$(Pipeline.Workspace)/drop/*.nupkg" --source "https://pkgs.dev.azure.com/yossizxc/_packaging/yossi/nuget/v3/index.json" --api-key $(PAT)
+  displayName: 'Push NuGet package to Artifacts'
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranchName'], 'feature/'))
+
   - script: dotnet build -c Release -o $(Build.ArtifactStagingDirectory)
     displayName: 'Build project'
 
