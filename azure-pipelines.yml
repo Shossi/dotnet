@@ -48,3 +48,4 @@ jobs:
       packageName: 'helloworld' 
       versionOption: 'custom'
       versionPublish: '1.0.$(Build.BuildId)' 
+      patvar: 'PAT'
