@@ -1,5 +1,6 @@
 trigger:
 - main
+- assignment-branch
 
 pool:
   name: 'Default'
@@ -13,24 +14,6 @@ jobs:
       packageType: 'sdk'
       version: '8.x' 
       installationPath: $(Agent.ToolsDirectory)/dotnet
-
-  # - task: SonarQubePrepare@4
-  #   condition: eq(variables['Build.SourceBranchName'], 'feature/sonarqube')  # Run only on 'feature/sonarqube' branch
-  #   inputs:
-  #     SonarQube: 'SonarQubeConnection'  # Replace with your actual service connection name
-  #     scannerMode: 'MSBuild'
-  #     projectKey: 'your-project-key'  # Replace with your SonarQube project key
-  #     projectName: 'your-project-name'
-
-  - script: |
-    dotnet pack --configuration Release --output $(Build.ArtifactStagingDirectory)
-  displayName: 'Create NuGet package'
-  condition: and(succeeded(), startsWith(variables['Build.SourceBranchName'], 'feature/'))
-
-- script: |
-    dotnet nuget push "$(Pipeline.Workspace)/drop/*.nupkg" --source "https://pkgs.dev.azure.com/yossizxc/_packaging/yossi/nuget/v3/index.json" --api-key $(PAT)
-  displayName: 'Push NuGet package to Artifacts'
-  condition: and(succeeded(), startsWith(variables['Build.SourceBranchName'], 'feature/'))
 
   - script: dotnet build -c Release -o $(Build.ArtifactStagingDirectory)
     displayName: 'Build project'
@@ -47,15 +30,41 @@ jobs:
   - script: dotnet test
     displayName: 'Run tests'
 
+# - job: SonarQube
+#   displayName: 'SonarQube Analysis'
+#   dependsOn: Test
+#   condition: eq(variables['Build.SourceBranch'], 'refs/heads/assignment-branch')
+#   steps:
+#   - task: SonarQubePrepare@5
+#     inputs:
+#       SonarQube: 'SonarQube'
+#       projectKey: 'your_project_key'
+#       projectName: 'your_project_name'
+#   
+#   - script: dotnet build
+#     displayName: 'Build for SonarQube'
+# 
+#   - task: SonarQubeAnalyze@5
+# 
+#   - task: SonarQubePublish@5
+#     inputs:
+#       pollingTimeoutSec: '300'
+
 - job: Publish
   displayName: 'Publish job'
-  dependsOn: Test
+  dependsOn: Test # change this to 'SonarQube' if you uncomment SonarQube job
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/assignment-branch')
   steps:
   - task: DownloadPipelineArtifact@2
     inputs:
       artifact: 'drop'
       path: '$(Pipeline.Workspace)/drop'
-  
+
+  - script: |
+      dotnet pack -o $(Build.ArtifactStagingDirectory)
+      dotnet nuget push $(Build.ArtifactStagingDirectory)/*.nupkg -k $(NuGetKey) -s $(NuGetSource)
+    displayName: 'Create and Publish NuGet package'
+
   - task: UniversalPackages@0
     inputs:
       command: 'publish'
@@ -64,4 +73,24 @@ jobs:
       vstsFeedPublish: 'fb34e676-860d-42fb-b174-75c46291e03f/954a6374-e3f9-4513-881c-4489225f54b4'
       vstsFeedPackagePublish: 'random'
       versionOption: 'patch'
-      patvar: 'PAT' 
+      patvar: 'PAT'
+    displayName: 'Publish to Artifacts'
+
+  - script: echo "##vso[build.addbuildtag]$(Build.SourceBranchName)_$(Build.BuildId)"
+    displayName: 'Tag Artifact'
+
+  - script: |
+      echo "Version: $(Build.BuildId)"
+    displayName: 'Print Version'
+
+# - job: Notify
+#   displayName: 'Notification job'
+#   dependsOn: Publish
+#   condition: always()
+#   steps:
+#   - task: Email@1
+#     inputs:
+#       to: 'your-email@example.com'
+#       subject: 'Pipeline Status: $(Build.SourceBranchName)'
+#       body: |
+#         The pipeline has completed with status: $(Build.Status).
