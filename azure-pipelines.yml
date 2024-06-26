@@ -6,7 +6,7 @@ pool:
 
 variables:
   PackageVersion: '1.0.$(Build.BuildId)'
-  BRANCH_NAME: $(Build.SourceBranchName)
+  BRANCH_NAME: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
 
 jobs:
 - job: Build
