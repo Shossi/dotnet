@@ -17,6 +17,10 @@ jobs:
     name: SetVariables
     displayName: 'Set Branch and Version Variables'
 
+  - script: |
+      echo "Artifact Name: $(Build.SourceBranchName)_1.0.$(Build.BuildId)"
+    displayName: 'Print Artifact Name'
+
   - task: UseDotNet@2
     inputs:
       packageType: 'sdk'
@@ -37,19 +41,11 @@ jobs:
       arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)'
     displayName: 'Pack NuGet package'
 
-  - script: |
-      echo "Publishing artifact: $(Build.SourceBranchName)_1.0.$(Build.BuildId)"
-    displayName: 'Print Artifact Name'
-
   - task: PublishBuildArtifacts@1
     inputs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)'
       ArtifactName: '$(Build.SourceBranchName)_1.0.$(Build.BuildId)'
     displayName: 'Publish Artifacts'
-
-  - script: |
-      echo "Artifact Version: 1.0.$(Build.BuildId)"
-    displayName: 'Print Version Number'
 
 - job: Test
   displayName: 'Test job'
@@ -70,6 +66,8 @@ jobs:
     VERSION: $[ dependencies.Build.outputs['SetVariables.VERSION'] ]
   steps:
   - script: |
+      echo "BRANCH_NAME: $(BRANCH_NAME)"
+      echo "VERSION: $(VERSION)"
       echo "Downloading artifact: $(BRANCH_NAME)_$(VERSION)"
     displayName: 'Print Artifact Name for Download'
 
