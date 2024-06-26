@@ -28,14 +28,14 @@ jobs:
     inputs:
       command: 'build'
       projects: '**/*.csproj'
-      arguments: '--configuration Release /p:Version=$(PackageVersion)'
+      arguments: '--configuration Release /p:Version=$(PackageVersion) /p:PackageId=$(Build.SourceBranchName)'
     displayName: 'Build project'
 
   - task: DotNetCoreCLI@2
     inputs:
       command: 'pack'
       projects: '**/*.csproj'
-      arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory) /p:Version=$(PackageVersion)'
+      arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory) /p:Version=$(PackageVersion) /p:PackageId=$(Build.SourceBranchName)'
     displayName: 'Pack NuGet package'
 
   - script: |
