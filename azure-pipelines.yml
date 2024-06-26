@@ -11,7 +11,9 @@ jobs:
   - script: |
       BUILD_ID=$(Build.BuildId)
       BRANCH_NAME=$(Build.SourceBranchName)
+      # Clean branch name by replacing slashes with hyphens
       BRANCH_NAME_CLEAN="${BRANCH_NAME//\//-}"
+      # Ensure DYNAMIC_VERSION is a valid version string
       DYNAMIC_VERSION="1.0.$BUILD_ID"
       PACKAGE_ID="$BRANCH_NAME_CLEAN.yossi"
       echo "##vso[task.setvariable variable=DYNAMIC_VERSION;isOutput=true]$DYNAMIC_VERSION"
@@ -22,6 +24,11 @@ jobs:
       echo "Package ID: $PACKAGE_ID"
     name: SetVariables
     displayName: 'Set Branch and Version Variables'
+
+  - script: |
+      echo "DYNAMIC_VERSION: $(DYNAMIC_VERSION)"
+      echo "PACKAGE_ID: $(PACKAGE_ID)"
+    displayName: 'Debug Version and Package ID'
 
   - task: UseDotNet@2
     inputs:
