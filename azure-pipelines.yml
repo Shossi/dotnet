@@ -48,7 +48,7 @@ jobs:
     displayName: 'Publish Artifacts'
 
   - script: |
-      echo "Artifact Version: $(Build.BuildId)"
+      echo "Artifact Version: 1.0.$(Build.BuildId)"
     displayName: 'Print Version Number'
 
 - job: Test
