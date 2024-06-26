@@ -51,17 +51,17 @@ jobs:
     displayName: 'Pack NuGet package'
 
   - script: |
-      echo "Publishing artifact: $(Build.SourceBranchName)_1.0.$(Build.BuildId)"
+      echo "Publishing artifact: $(Build.SourceBranchName)_$(DYNAMIC_VERSION)"
     displayName: 'Print Artifact Name Before Publishing'
 
   - task: PublishBuildArtifacts@1
     inputs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      ArtifactName: '$(Build.SourceBranchName)_1.0.$(Build.BuildId)'
+      ArtifactName: '$(Build.SourceBranchName)_$(DYNAMIC_VERSION)'
     displayName: 'Publish Artifacts'
 
   - script: |
-      echo "Artifact Version: 1.0.$(Build.BuildId)"
+      echo "Artifact Version: $(DYNAMIC_VERSION)"
     displayName: 'Print Version Number'
 
 - job: Test
@@ -87,12 +87,12 @@ jobs:
   - script: |
       echo "BRANCH_NAME: $BRANCH_NAME"
       echo "VERSION: $DYNAMIC_VERSION"
-      echo "Downloading artifact: ${BRANCH_NAME}_1.0.$(Build.BuildId)"
+      echo "Downloading artifact: ${BRANCH_NAME}_${DYNAMIC_VERSION}"
     displayName: 'Print Artifact Name for Download'
 
   - task: DownloadPipelineArtifact@2
     inputs:
-      artifact: '$(BRANCH_NAME)_1.0.$(Build.BuildId)'
+      artifact: '$(BRANCH_NAME)_$(DYNAMIC_VERSION)'
       path: '$(Pipeline.Workspace)/drop'
     displayName: 'Download Artifact'
 
