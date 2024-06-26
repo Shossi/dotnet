@@ -39,17 +39,17 @@ jobs:
     displayName: 'Pack NuGet package'
 
   - script: |
-      echo "Publishing artifact: $(Build.SourceBranchName)_$(VERSION)"
+      echo "Publishing artifact: $(Build.SourceBranchName)_1.0.$(Build.BuildId)"
     displayName: 'Print Artifact Name Before Publishing'
 
   - task: PublishBuildArtifacts@1
     inputs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      ArtifactName: '$(Build.SourceBranchName)_$(VERSION)'
+      ArtifactName: '$(Build.SourceBranchName)_1.0.$(Build.BuildId)'
     displayName: 'Publish Artifacts'
 
   - script: |
-      echo "Artifact Version: $(VERSION)"
+      echo "Artifact Version: 1.0.$(Build.BuildId)"
     displayName: 'Print Version Number'
 
 - job: Test
