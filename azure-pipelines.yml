@@ -2,12 +2,20 @@ trigger:
 - main
 
 pool:
-  name: 'Default'
+  name: 'default'
 
 jobs:
 - job: Build
   displayName: 'Build job'
   steps:
+  - script: |
+      VERSION="1.0.$(Build.BuildId)"
+      echo "##vso[task.setvariable variable=VERSION]$VERSION"
+      echo "##vso[task.setvariable variable=BRANCH_NAME]$(Build.SourceBranchName)"
+      echo "Branch: $(Build.SourceBranchName)"
+      echo "Version: $VERSION"
+    displayName: 'Set Branch and Version Variables'
+
   - task: UseDotNet@2
     inputs:
       packageType: 'sdk'
@@ -31,7 +39,12 @@ jobs:
   - task: PublishBuildArtifacts@1
     inputs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      ArtifactName: 'drop'
+      ArtifactName: '$(BRANCH_NAME)_$(VERSION)'
+    displayName: 'Publish Artifacts'
+
+  - script: |
+      echo "Artifact Version: $(VERSION)"
+    displayName: 'Print Version Number'
 
 - job: Test
   displayName: 'Test job'
@@ -50,20 +63,21 @@ jobs:
   steps:
   - task: DownloadPipelineArtifact@2
     inputs:
-      artifact: 'drop'
+      artifact: '$(BRANCH_NAME)_$(VERSION)'
       path: '$(Pipeline.Workspace)/drop'
+
   - task: NuGetCommand@2
     inputs:
       command: 'restore'
       feedsToUse: 'select'
-      vstsFeed: 'fb34e676-860d-42fb-b174-75c46291e03f/954a6374-e3f9-4513-881c-4489225f54b4'  
+      vstsFeed: 'fb34e676-860d-42fb-b174-75c46291e03f/954a6374-e3f9-4513-881c-4489225f54b4'
     displayName: 'Restore NuGet packages (Authenticate to feed)'
-  
+
   - task: NuGetCommand@2
     inputs:
       command: 'push'
       packagesToPush: '$(Pipeline.Workspace)/drop/*.nupkg'
-      publishVstsFeed: 'fb34e676-860d-42fb-b174-75c46291e03f/954a6374-e3f9-4513-881c-4489225f54b4' 
+      publishVstsFeed: 'fb34e676-860d-42fb-b174-75c46291e03f/954a6374-e3f9-4513-881c-4489225f54b4'
     displayName: 'Push NuGet package'
 
   - task: UniversalPackages@0
