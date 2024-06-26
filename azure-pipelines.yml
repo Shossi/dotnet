@@ -3,12 +3,13 @@ trigger:
     include:
     - main
     - feature/*
+
 pool:
   name: 'default'
 
 variables:
   PackageVersion: '1.0.$(Build.BuildId)'
-  BRANCH_NAME: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
+  BRANCH_NAME: $[replace(replace(variables['Build.SourceBranch'], 'refs/heads/', ''), '/', '-')]
 
 jobs:
 - job: Build
@@ -22,6 +23,7 @@ jobs:
 
   - script: |
       rm -rf $(Pipeline.Workspace)/drop/*.nupkg
+      echo "$(BRANCH_NAME)"
     displayName: 'Clean up old packages'
 
   - task: DotNetCoreCLI@2
@@ -63,17 +65,17 @@ jobs:
   steps:
   - script: |
       echo "Name + Version: $(BRANCH_NAME)_$(PackageVersion)"
-    condition: eq(variables['BRANCH_NAME'], 'feature')
+    condition: startsWith(variables['BRANCH_NAME'], 'feature/')
     displayName: 'Print Artifact Name + Version'  
   - task: DownloadPipelineArtifact@2
-    condition: eq(variables['BRANCH_NAME'], 'feature')
+    condition: startsWith(variables['BRANCH_NAME'], 'feature/')
     inputs:
       artifact: '$(BRANCH_NAME)_$(PackageVersion)'
       path: '$(Pipeline.Workspace)/drop'
     displayName: 'Download Artifact'
 
   - task: NuGetCommand@2
-    condition: eq(variables['BRANCH_NAME'], 'feature')
+    condition: startsWith(variables['BRANCH_NAME'], 'feature/')
     inputs:
       command: 'restore'
       feedsToUse: 'select'
@@ -81,7 +83,7 @@ jobs:
     displayName: 'Restore NuGet packages (Authenticate to feed)'
 
   - task: NuGetCommand@2
-    condition: eq(variables['BRANCH_NAME'], 'feature')
+    condition: startsWith(variables['BRANCH_NAME'], 'feature/')
     inputs:
       command: 'push'
       packagesToPush: '$(Pipeline.Workspace)/drop/*.nupkg'
