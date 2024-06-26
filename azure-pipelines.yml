@@ -80,7 +80,7 @@ jobs:
 
   - task: DownloadPipelineArtifact@2
     inputs:
-      artifact: '${BRANCH_NAME}_${VERSION}'
+      artifact: '$(BRANCH_NAME)_$(VERSION)'
       path: '$(Pipeline.Workspace)/drop'
     displayName: 'Download Artifact'
 
