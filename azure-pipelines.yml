@@ -21,6 +21,7 @@ jobs:
   - script: |
       echo "Cleaning up old packages"
       echo "Branch Name: $(BRANCH_NAME)"
+      echo "Pipeline Workspace: $(Pipeline.Workspace)"
       rm -rf $(Pipeline.Workspace)/drop/*.nupkg
     displayName: 'Clean up old packages'
 
