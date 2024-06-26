@@ -9,29 +9,11 @@ jobs:
   displayName: 'Build job'
   steps:
   - script: |
-      BUILD_ID=$(Build.BuildId)
       BRANCH_NAME=$(Build.SourceBranchName)
-      # Clean branch name by replacing slashes with hyphens
-      BRANCH_NAME_CLEAN="${BRANCH_NAME//\//-}"
-      # Ensure DYNAMIC_VERSION is a valid version string
-      DYNAMIC_VERSION="1.0.${BUILD_ID}"
-      PACKAGE_ID="${BRANCH_NAME_CLEAN}.yossi"
+      echo "##vso[task.setvariable variable=BRANCH_NAME;isOutput=true]$BRANCH_NAME"
       echo "Branch: $BRANCH_NAME"
-      echo "Clean Branch: $BRANCH_NAME_CLEAN"
-      echo "Dynamic Version: $DYNAMIC_VERSION"
-      echo "Package ID: $PACKAGE_ID"
-      
-      # Save variables to a file for later use
-      echo "DYNAMIC_VERSION=$DYNAMIC_VERSION" > $(Build.ArtifactStagingDirectory)/build_vars.sh
-      echo "PACKAGE_ID=$PACKAGE_ID" >> $(Build.ArtifactStagingDirectory)/build_vars.sh
-    displayName: 'Set Branch and Version Variables'
-
-  - script: |
-      # Source the variables
-      source $(Build.ArtifactStagingDirectory)/build_vars.sh
-      echo "DYNAMIC_VERSION: $DYNAMIC_VERSION"
-      echo "PACKAGE_ID: $PACKAGE_ID"
-    displayName: 'Debug Version and Package ID'
+    name: SetVariables
+    displayName: 'Set Branch Variable'
 
   - task: UseDotNet@2
     inputs:
@@ -39,50 +21,43 @@ jobs:
       version: '8.x'
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
-  - script: |
-      # Source the variables
-      source $(Build.ArtifactStagingDirectory)/build_vars.sh
-      echo "DYNAMIC_VERSION: $DYNAMIC_VERSION"
-      echo "PACKAGE_ID: $PACKAGE_ID"
-      dotnet build **/*.csproj --configuration Release /p:PackageVersion=$DYNAMIC_VERSION /p:PackageId=$PACKAGE_ID
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: 'build'
+      projects: '**/*.csproj'
+      arguments: '--configuration Release'
     displayName: 'Build project'
 
-  - script: |
-      # Source the variables
-      source $(Build.ArtifactStagingDirectory)/build_vars.sh
-      echo "DYNAMIC_VERSION: $DYNAMIC_VERSION"
-      echo "PACKAGE_ID: $PACKAGE_ID"
-      dotnet pack **/*.csproj --configuration Release --output $(Build.ArtifactStagingDirectory) /p:PackageVersion=$DYNAMIC_VERSION /p:PackageId=$PACKAGE_ID
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: 'pack'
+      projects: '**/*.csproj'
+      arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)'
     displayName: 'Pack NuGet package'
 
   - script: |
-      # Source the variables
-      source $(Build.ArtifactStagingDirectory)/build_vars.sh
-      echo "Publishing artifact: $(Build.SourceBranchName)_$DYNAMIC_VERSION"
+      echo "Publishing artifact: $(Build.SourceBranchName)_1.0.$(Build.BuildId)"
     displayName: 'Print Artifact Name Before Publishing'
 
   - task: PublishBuildArtifacts@1
     inputs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      ArtifactName: '$(Build.SourceBranchName)_$(DYNAMIC_VERSION)'
+      ArtifactName: '$(Build.SourceBranchName)_1.0.$(Build.BuildId)'
     displayName: 'Publish Artifacts'
 
   - script: |
-      # Source the variables
-      source $(Build.ArtifactStagingDirectory)/build_vars.sh
-      echo "Artifact Version: $DYNAMIC_VERSION"
+      echo "Artifact Version: 1.0.$(Build.BuildId)"
     displayName: 'Print Version Number'
 
 - job: Test
   displayName: 'Test job'
   dependsOn: Build
   steps:
-  - script: |
-      # Source the variables
-      source $(Build.ArtifactStagingDirectory)/build_vars.sh
-      echo "DYNAMIC_VERSION: $DYNAMIC_VERSION"
-      echo "PACKAGE_ID: $PACKAGE_ID"
-      dotnet test **/*.csproj --configuration Release
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: 'test'
+      projects: '**/*.csproj'
+      arguments: '--configuration Release'
     displayName: 'Run tests'
 
 - job: Publish
@@ -90,18 +65,17 @@ jobs:
   dependsOn:
   - Build
   - Test
+  variables:
+    BRANCH_NAME: $[ dependencies.Build.outputs['SetVariables.BRANCH_NAME'] ]
   steps:
   - script: |
-      # Source the variables
-      source $(Build.ArtifactStagingDirectory)/build_vars.sh
       echo "BRANCH_NAME: $BRANCH_NAME"
-      echo "VERSION: $DYNAMIC_VERSION"
-      echo "Downloading artifact: ${BRANCH_NAME}_${DYNAMIC_VERSION}"
+      echo "Downloading artifact: ${BRANCH_NAME}_1.0.$(Build.BuildId)"
     displayName: 'Print Artifact Name for Download'
 
   - task: DownloadPipelineArtifact@2
     inputs:
-      artifact: '$(Build.SourceBranchName)_$(DYNAMIC_VERSION)'
+      artifact: '$(BRANCH_NAME)_1.0.$(Build.BuildId)'
       path: '$(Pipeline.Workspace)/drop'
     displayName: 'Download Artifact'
 
