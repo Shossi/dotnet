@@ -20,8 +20,8 @@ jobs:
 
   - script: |
       echo "Cleaning up old packages"
-      echo "Artifact Staging Directory: $(Build.ArtifactStagingDirectory)"
-      rm -rf $(Build.ArtifactStagingDirectory)/*.nupkg
+      echo "$(BRANCH_NAME)"
+      rm -rf $(Pipeline.Workspace)/drop/*.nupkg
     displayName: 'Clean up old packages'
 
   - task: DotNetCoreCLI@2
