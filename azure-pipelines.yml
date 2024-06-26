@@ -2,7 +2,7 @@ trigger:
 - main
 
 pool:
-  name: 'Default'
+  vmImage: 'ubuntu-latest'  # Use a Linux agent
 
 jobs:
 - job: Build
@@ -55,15 +55,19 @@ jobs:
 
   - script: |
       sudo apt update
-      sudo apt install -y apt-transport-https dirmngr gnupg ca-certificates
-      sudo apt-key adv --no-tty --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-      echo "deb https://download.mono-project.com/repo/ubuntu stable-bionic main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
+      sudo apt install -y dirmngr gnupg apt-transport-https ca-certificates
+      sudo bash -c 'wget -qO- https://download.mono-project.com/repo/xamarin.gpg | apt-key add -'
+      sudo apt-add-repository 'deb https://download.mono-project.com/repo/ubuntu stable-bionic main'
       sudo apt update
       sudo apt install -y mono-devel
     displayName: 'Install Mono'
-
-  - task: NuGetAuthenticate@0
-    displayName: 'Authenticate to NuGet feed'
+  
+  - task: NuGetCommand@2
+    inputs:
+      command: 'restore'
+      feedsToUse: 'select'
+      vstsFeed: 'fb34e676-860d-42fb-b174-75c46291e03f'
+    displayName: 'Restore NuGet packages (Authenticate to feed)'
   
   - task: NuGetCommand@2
     inputs:
