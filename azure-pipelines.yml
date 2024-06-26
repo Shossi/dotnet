@@ -53,36 +53,6 @@ jobs:
       artifact: 'drop'
       path: '$(Pipeline.Workspace)/drop'
 
-  - script: |
-      echo 'Starting apt update'
-      sudo apt-get update -y
-      echo 'Finished apt update'
-      
-      echo 'Starting installation of prerequisites'
-      sudo apt-get install -y dirmngr gnupg apt-transport-https ca-certificates
-      echo 'Finished installation of prerequisites'
-      
-      echo 'Creating directory for keyrings'
-      sudo mkdir -p /etc/apt/keyrings
-      echo 'Finished creating directory for keyrings'
-      
-      echo 'Downloading GPG key for Mono repository'
-      sudo wget -qO /etc/apt/keyrings/mono-archive-keyring.gpg https://download.mono-project.com/repo/xamarin.gpg
-      echo 'Finished downloading GPG key'
-      
-      echo 'Adding Mono repository to sources list'
-      echo "deb [signed-by=/etc/apt/keyrings/mono-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
-      echo 'Finished adding Mono repository'
-      
-      echo 'Updating apt-get again'
-      sudo apt-get update -y
-      echo 'Finished updating apt-get'
-      
-      echo 'Starting installation of Mono'
-      sudo apt-get install -y mono-devel
-      echo 'Finished installation of Mono'
-    displayName: 'Install Mono'
-  
   - task: NuGetCommand@2
     inputs:
       command: 'restore'
