@@ -65,22 +65,23 @@ jobs:
 
 - job: Publish
   displayName: 'Publish job'
-  dependsOn: Test
+  dependsOn: Build
   variables:
     BRANCH_NAME: $[ dependencies.Build.outputs['SetVariables.BRANCH_NAME'] ]
     VERSION: $[ dependencies.Build.outputs['SetVariables.VERSION'] ]
   steps:
   - script: |
-      echo "BRANCH_NAME: $(BRANCH_NAME)"
-      echo "VERSION: $(VERSION)"
-      echo "Downloading artifact: $(BRANCH_NAME)_$(VERSION)"
+      echo "BRANCH_NAME: $[ dependencies.Build.outputs['SetVariables.BRANCH_NAME'] ]"
+      echo "VERSION: $[ dependencies.Build.outputs['SetVariables.VERSION'] ]"
+      echo "Downloading artifact: $[ dependencies.Build.outputs['SetVariables.BRANCH_NAME'] ]_$[ dependencies.Build.outputs['SetVariables.VERSION'] ]"
     displayName: 'Print Artifact Name for Download'
 
   - task: DownloadPipelineArtifact@2
     inputs:
-      artifact: '$(BRANCH_NAME)_$(VERSION)'
+      artifact: $[ dependencies.Build.outputs['SetVariables.BRANCH_NAME'] ]_$[ dependencies.Build.outputs['SetVariables.VERSION'] ]
       path: '$(Pipeline.Workspace)/drop'
     displayName: 'Download Artifact'
+
 
   - task: NuGetCommand@2
     inputs:
