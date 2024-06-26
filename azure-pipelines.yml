@@ -71,14 +71,14 @@ jobs:
     VERSION: $[ dependencies.Build.outputs['SetVariables.VERSION'] ]
   steps:
   - script: |
-      echo "BRANCH_NAME: $[ dependencies.Build.outputs['Build.SetVariables.BRANCH_NAME'] ]"
-      echo "VERSION: $[ dependencies.Build.outputs['Build.SetVariables.VERSION'] ]"
-      echo "Downloading artifact: $[ dependencies.Build.outputs['Build.SetVariables.BRANCH_NAME'] ]_$[ dependencies.Build.outputs['Build.SetVariables.VERSION'] ]"
+      echo "BRANCH_NAME: $(BRANCH_NAME)"
+      echo "VERSION: $(VERSION)"
+      echo "Downloading artifact: $(BRANCH_NAME)_$(VERSION)"
     displayName: 'Print Artifact Name for Download'
 
   - task: DownloadPipelineArtifact@2
     inputs:
-      artifact: $[ dependencies.Build.outputs['Build.SetVariables.BRANCH_NAME'] ]_$[ dependencies.Build.outputs['Build.SetVariables.VERSION'] ]
+      artifact: '$(BRANCH_NAME)_$(VERSION)'
       path: '$(Pipeline.Workspace)/drop'
     displayName: 'Download Artifact'
 
