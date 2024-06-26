@@ -10,10 +10,11 @@ jobs:
   steps:
   - script: |
       VERSION="1.0.$(Build.BuildId)"
-      echo "##vso[task.setvariable variable=VERSION]$VERSION"
-      echo "##vso[task.setvariable variable=BRANCH_NAME]$(Build.SourceBranchName)"
+      echo "##vso[task.setvariable variable=VERSION;isOutput=true]$VERSION"
+      echo "##vso[task.setvariable variable=BRANCH_NAME;isOutput=true]$(Build.SourceBranchName)"
       echo "Branch: $(Build.SourceBranchName)"
       echo "Version: $VERSION"
+    name: SetVariables
     displayName: 'Set Branch and Version Variables'
 
   - task: UseDotNet@2
@@ -37,17 +38,17 @@ jobs:
     displayName: 'Pack NuGet package'
 
   - script: |
-      echo "Publishing artifact: $(BRANCH_NAME)_$(VERSION)"
+      echo "Publishing artifact: $(Build.SourceBranchName)_1.0.$(Build.BuildId)"
     displayName: 'Print Artifact Name'
 
   - task: PublishBuildArtifacts@1
     inputs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      ArtifactName: '$(BRANCH_NAME)_$(VERSION)'
+      ArtifactName: '$(Build.SourceBranchName)_1.0.$(Build.BuildId)'
     displayName: 'Publish Artifacts'
 
   - script: |
-      echo "Artifact Version: $(VERSION)"
+      echo "Artifact Version: $(Build.BuildId)"
     displayName: 'Print Version Number'
 
 - job: Test
@@ -64,7 +65,14 @@ jobs:
 - job: Publish
   displayName: 'Publish job'
   dependsOn: Test
+  variables:
+    BRANCH_NAME: $[ dependencies.Build.outputs['SetVariables.BRANCH_NAME'] ]
+    VERSION: $[ dependencies.Build.outputs['SetVariables.VERSION'] ]
   steps:
+  - script: |
+      echo "Downloading artifact: $(BRANCH_NAME)_$(VERSION)"
+    displayName: 'Print Artifact Name for Download'
+
   - task: DownloadPipelineArtifact@2
     inputs:
       artifact: '$(BRANCH_NAME)_$(VERSION)'
