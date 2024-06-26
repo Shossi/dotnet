@@ -56,23 +56,22 @@ jobs:
     inputs:
       command: 'restore'
       feedsToUse: 'select'
-      vstsFeed: 'yossi'  
+      vstsFeed: 'fb34e676-860d-42fb-b174-75c46291e03f/954a6374-e3f9-4513-881c-4489225f54b4'  
     displayName: 'Restore NuGet packages (Authenticate to feed)'
   
   - task: NuGetCommand@2
     inputs:
       command: 'push'
       packagesToPush: '$(Pipeline.Workspace)/drop/*.nupkg'
-      publishVstsFeed: 'yossi' 
+      publishVstsFeed: 'fb34e676-860d-42fb-b174-75c46291e03f/954a6374-e3f9-4513-881c-4489225f54b4' 
     displayName: 'Push NuGet package'
-
 
   - task: UniversalPackages@0
     inputs:
       command: 'publish'
       publishDirectory: '$(Pipeline.Workspace)/drop'
       feedsToUsePublish: 'internal'
-      vstsFeedPublish: 'fb34e676-860d-42fb-b174-75c46291e03f'
+      vstsFeedPublish: 'fb34e676-860d-42fb-b174-75c46291e03f/954a6374-e3f9-4513-881c-4489225f54b4'
       vstsFeedPackagePublish: 'random'
       versionOption: 'patch'
       patvar: 'PAT'
