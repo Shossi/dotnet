@@ -6,9 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>$(PackageId)</PackageId>
+    <PackageId Condition=" '$(PackageId)' == '' ">default-package-id</PackageId>
     <VersionPrefix>1.0.0</VersionPrefix>
-    <VersionSuffix>$(VersionSuffix)</VersionSuffix>
+    <VersionSuffix Condition=" '$(VersionSuffix)' == '' ">dev</VersionSuffix>
     <Authors>yos</Authors>
     <Description>description</Description>
     <PackageOutputPath>$(OutputPath)</PackageOutputPath>
