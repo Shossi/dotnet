@@ -26,7 +26,7 @@ jobs:
     inputs:
       command: 'build'
       projects: '**/*.csproj'
-      arguments: '--configuration Release /p:Version=$(PackageVersion) /p:PackageId=$(BRANCH_NAME)'
+      arguments: '--configuration Release /p:Version=$(PackageVersion) /p:PackageId=hello'
     displayName: 'Build project'
 
   - task: DotNetCoreCLI@2
@@ -45,10 +45,6 @@ jobs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)'
       ArtifactName: '$(BRANCH_NAME)_$(PackageVersion)'
     displayName: 'Publish Artifacts'
-
-  - script: |
-      echo "Artifact Version: $(PackageVersion)"
-    displayName: 'Print Version Number'
 
 - job: Test
   displayName: 'Test job'
