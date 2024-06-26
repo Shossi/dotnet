@@ -3,6 +3,7 @@ trigger:
     include:
     - main
     - feature/*
+
 pool:
   name: 'default'
 
@@ -22,6 +23,7 @@ jobs:
 
   - script: |
       rm -rf $(Pipeline.Workspace)/drop/*.nupkg
+      echo "$(BRANCH_NAME)"
     displayName: 'Clean up old packages'
 
   - task: DotNetCoreCLI@2
