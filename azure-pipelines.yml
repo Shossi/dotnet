@@ -1,7 +1,8 @@
 trigger:
-- main
-- feature/*
-
+  branches:
+    include:
+    - main
+    - feature/*
 pool:
   name: 'default'
 
