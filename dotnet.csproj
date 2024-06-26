@@ -7,8 +7,6 @@
     <Nullable>enable</Nullable>
 
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>yossi</PackageId>
-    <Version>$(PackageVersion)</Version>
     <Authors>yos</Authors>
     <Description>description</Description>
     <PackageOutputPath>$(OutputPath)</PackageOutputPath>
