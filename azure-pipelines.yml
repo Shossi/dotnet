@@ -52,20 +52,20 @@ jobs:
     inputs:
       artifact: 'drop'
       path: '$(Pipeline.Workspace)/drop'
-
   - task: NuGetCommand@2
     inputs:
       command: 'restore'
       feedsToUse: 'select'
-      vstsFeed: 'fb34e676-860d-42fb-b174-75c46291e03f'
+      vstsFeed: 'yossi'  
     displayName: 'Restore NuGet packages (Authenticate to feed)'
   
   - task: NuGetCommand@2
     inputs:
       command: 'push'
       packagesToPush: '$(Pipeline.Workspace)/drop/*.nupkg'
-      publishVstsFeed: 'fb34e676-860d-42fb-b174-75c46291e03f'
+      publishVstsFeed: 'yossi' 
     displayName: 'Push NuGet package'
+
 
   - task: UniversalPackages@0
     inputs:
