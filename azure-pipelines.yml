@@ -54,7 +54,6 @@ jobs:
       path: '$(Pipeline.Workspace)/drop'
 
   - script: |
-      echo 'azureuser ALL=(ALL) NOPASSWD:ALL' | sudo tee /etc/sudoers.d/azureuser
       set -x  # Enable command echo for debugging
       sudo apt-get update -y
       sudo apt-get install -y dirmngr gnupg apt-transport-https ca-certificates
