@@ -16,6 +16,7 @@ jobs:
       # Ensure DYNAMIC_VERSION is a valid version string
       DYNAMIC_VERSION="1.0.${BUILD_ID}"
       PACKAGE_ID="${BRANCH_NAME_CLEAN}.yossi"
+      # Set variables to be used in later steps/jobs
       echo "##vso[task.setvariable variable=DYNAMIC_VERSION;isOutput=true]$DYNAMIC_VERSION"
       echo "##vso[task.setvariable variable=PACKAGE_ID;isOutput=true]$PACKAGE_ID"
       echo "Branch: $BRANCH_NAME"
@@ -26,6 +27,7 @@ jobs:
     displayName: 'Set Branch and Version Variables'
 
   - script: |
+      # Access and print the variables set earlier
       echo "DYNAMIC_VERSION: $(DYNAMIC_VERSION)"
       echo "PACKAGE_ID: $(PACKAGE_ID)"
     displayName: 'Debug Version and Package ID'
@@ -51,6 +53,7 @@ jobs:
     displayName: 'Pack NuGet package'
 
   - script: |
+      # Print artifact name before publishing
       echo "Publishing artifact: $(Build.SourceBranchName)_$(DYNAMIC_VERSION)"
     displayName: 'Print Artifact Name Before Publishing'
 
@@ -61,6 +64,7 @@ jobs:
     displayName: 'Publish Artifacts'
 
   - script: |
+      # Print the version number to confirm
       echo "Artifact Version: $(DYNAMIC_VERSION)"
     displayName: 'Print Version Number'
 
@@ -81,10 +85,12 @@ jobs:
   - Build
   - Test
   variables:
+    # Use the output variables from the Build job
     BRANCH_NAME: $[ dependencies.Build.outputs['SetVariables.BRANCH_NAME'] ]
     DYNAMIC_VERSION: $[ dependencies.Build.outputs['SetVariables.DYNAMIC_VERSION'] ]
   steps:
   - script: |
+      # Print the branch name and version to confirm
       echo "BRANCH_NAME: $BRANCH_NAME"
       echo "VERSION: $DYNAMIC_VERSION"
       echo "Downloading artifact: ${BRANCH_NAME}_${DYNAMIC_VERSION}"
