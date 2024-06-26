@@ -35,21 +35,21 @@ jobs:
     inputs:
       command: 'pack'
       projects: '**/*.csproj'
-      arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)'
+      arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory) /p:PackageVersion=$(VERSION)'
     displayName: 'Pack NuGet package'
 
   - script: |
-      echo "Publishing artifact: $(Build.SourceBranchName)_1.0.$(Build.BuildId)"
+      echo "Publishing artifact: $(Build.SourceBranchName)_$(VERSION)"
     displayName: 'Print Artifact Name Before Publishing'
 
   - task: PublishBuildArtifacts@1
     inputs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      ArtifactName: '$(Build.SourceBranchName)_1.0.$(Build.BuildId)'
+      ArtifactName: '$(Build.SourceBranchName)_$(VERSION)'
     displayName: 'Publish Artifacts'
 
   - script: |
-      echo "Artifact Version: 1.0.$(Build.BuildId)"
+      echo "Artifact Version: $(VERSION)"
     displayName: 'Print Version Number'
 
 - job: Test
