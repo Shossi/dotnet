@@ -20,6 +20,7 @@ jobs:
 
   - script: |
       echo "Cleaning up old packages"
+      echo "Artifact Staging Directory: $(Build.ArtifactStagingDirectory)"
       rm -rf $(Build.ArtifactStagingDirectory)/*.nupkg
     displayName: 'Clean up old packages'
 
