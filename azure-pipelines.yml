@@ -65,17 +65,17 @@ jobs:
   steps:
   - script: |
       echo "Name + Version: $(BRANCH_NAME)_$(PackageVersion)"
-    condition: startsWith(variables['BRANCH_NAME'], 'feature/')
+    condition: startsWith(variables['BRANCH_NAME'], 'feature')
     displayName: 'Print Artifact Name + Version'  
   - task: DownloadPipelineArtifact@2
-    condition: startsWith(variables['BRANCH_NAME'], 'feature/')
+    condition: startsWith(variables['BRANCH_NAME'], 'feature')
     inputs:
       artifact: '$(BRANCH_NAME)_$(PackageVersion)'
       path: '$(Pipeline.Workspace)/drop'
     displayName: 'Download Artifact'
 
   - task: NuGetCommand@2
-    condition: startsWith(variables['BRANCH_NAME'], 'feature/')
+    condition: startsWith(variables['BRANCH_NAME'], 'feature')
     inputs:
       command: 'restore'
       feedsToUse: 'select'
@@ -83,7 +83,7 @@ jobs:
     displayName: 'Restore NuGet packages (Authenticate to feed)'
 
   - task: NuGetCommand@2
-    condition: startsWith(variables['BRANCH_NAME'], 'feature/')
+    condition: startsWith(variables['BRANCH_NAME'], 'feature')
     inputs:
       command: 'push'
       packagesToPush: '$(Pipeline.Workspace)/drop/*.nupkg'
