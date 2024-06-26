@@ -20,7 +20,7 @@ jobs:
 
   - script: |
       echo "Cleaning up old packages"
-      echo "$(BRANCH_NAME)"
+      echo "Branch Name: $(BRANCH_NAME)"
       rm -rf $(Pipeline.Workspace)/drop/*.nupkg
     displayName: 'Clean up old packages'
 
@@ -35,7 +35,7 @@ jobs:
     inputs:
       command: 'pack'
       projects: '**/*.csproj'
-      arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory) /p:Version=$(PackageVersion) /p:PackageId=$(BRANCH_NAME)'
+      arguments: '--configuration Release --output $(Pipeline.Workspace)/drop /p:Version=$(PackageVersion) /p:PackageId=$(BRANCH_NAME)'
     displayName: 'Pack NuGet package'
 
   - script: |
@@ -44,7 +44,7 @@ jobs:
 
   - task: PublishBuildArtifacts@1
     inputs:
-      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      PathtoPublish: '$(Pipeline.Workspace)/drop'
       ArtifactName: '$(BRANCH_NAME)_$(PackageVersion)'
     displayName: 'Publish Artifacts'
 
@@ -69,11 +69,11 @@ jobs:
   - Build
   - Test
   variables:
-    BRANCH_NAME: $(Build.SourceBranchName)
+    BRANCH_NAME: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
   steps:
   - script: |
-      echo "BRANCH_NAME: $BRANCH_NAME"
-      echo "Downloading artifact: ${BRANCH_NAME}_$(PackageVersion)"
+      echo "BRANCH_NAME: $(BRANCH_NAME)"
+      echo "Downloading artifact: $(BRANCH_NAME)_$(PackageVersion)"
     displayName: 'Print Artifact Name for Download'
 
   - task: DownloadPipelineArtifact@2
