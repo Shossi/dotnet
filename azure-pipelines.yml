@@ -66,8 +66,6 @@ jobs:
   dependsOn:
   - Build
   - Test
-  variables:
-    BRANCH_NAME: $[replace(variables['Build.SourceBranch'], 'refs/heads/', '')]
   steps:
   - script: |
       echo "BRANCH_NAME: $(BRANCH_NAME)"
