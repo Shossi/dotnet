@@ -53,6 +53,15 @@ jobs:
       artifact: 'drop'
       path: '$(Pipeline.Workspace)/drop'
 
+  - script: |
+      sudo apt update
+      sudo apt install -y apt-transport-https dirmngr gnupg ca-certificates
+      sudo apt-key adv --no-tty --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+      echo "deb https://download.mono-project.com/repo/ubuntu stable-bionic main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
+      sudo apt update
+      sudo apt install -y mono-devel
+    displayName: 'Install Mono'
+
   - task: NuGetAuthenticate@0
     displayName: 'Authenticate to NuGet feed'
   
@@ -60,7 +69,7 @@ jobs:
     inputs:
       command: 'push'
       packagesToPush: '$(Pipeline.Workspace)/drop/*.nupkg'
-      publishVstsFeed: 'fb34e676-860d-42fb-b174-75c46291e03f/your-feed-name'
+      publishVstsFeed: 'fb34e676-860d-42fb-b174-75c46291e03f'
     displayName: 'Push NuGet package'
 
   - task: UniversalPackages@0
@@ -68,7 +77,7 @@ jobs:
       command: 'publish'
       publishDirectory: '$(Pipeline.Workspace)/drop'
       feedsToUsePublish: 'internal'
-      vstsFeedPublish: 'fb34e676-860d-42fb-b174-75c46291e03f/your-feed-name'
-      vstsFeedPackagePublish: 'first'
+      vstsFeedPublish: 'fb34e676-860d-42fb-b174-75c46291e03f'
+      vstsFeedPackagePublish: 'random'
       versionOption: 'patch'
       patvar: 'PAT'
