@@ -9,11 +9,13 @@ jobs:
   displayName: 'Build job'
   steps:
   - script: |
-      DYNAMIC_VERSION="1.0.$(Build.BuildId)"
-      PACKAGE_ID="$(Build.SourceBranchName).yossi"
+      BUILD_ID=$(Build.BuildId)
+      BRANCH_NAME=$(Build.SourceBranchName)
+      DYNAMIC_VERSION="1.0.$BUILD_ID"
+      PACKAGE_ID="${BRANCH_NAME//\//-}.yossi"
       echo "##vso[task.setvariable variable=DYNAMIC_VERSION;isOutput=true]$DYNAMIC_VERSION"
       echo "##vso[task.setvariable variable=PACKAGE_ID;isOutput=true]$PACKAGE_ID"
-      echo "Branch: $(Build.SourceBranchName)"
+      echo "Branch: $BRANCH_NAME"
       echo "Dynamic Version: $DYNAMIC_VERSION"
       echo "Package ID: $PACKAGE_ID"
     name: SetVariables
@@ -76,12 +78,12 @@ jobs:
   - script: |
       echo "BRANCH_NAME: $BRANCH_NAME"
       echo "VERSION: $DYNAMIC_VERSION"
-      echo "Downloading artifact: ${BRANCH_NAME}_${DYNAMIC_VERSION}"
+      echo "Downloading artifact: ${BRANCH_NAME}_1.0.$(Build.BuildId)"
     displayName: 'Print Artifact Name for Download'
 
   - task: DownloadPipelineArtifact@2
     inputs:
-      artifact: '$(BRANCH_NAME)_$(DYNAMIC_VERSION)'
+      artifact: '$(BRANCH_NAME)_1.0.$(Build.BuildId)'
       path: '$(Pipeline.Workspace)/drop'
     displayName: 'Download Artifact'
 
