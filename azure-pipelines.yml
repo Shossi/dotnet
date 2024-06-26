@@ -99,3 +99,22 @@ jobs:
       vstsFeedPackagePublish: 'random'
       versionOption: 'patch'
       patvar: 'PAT'
+
+- job: Notify
+  displayName: 'Send Notification'
+  dependsOn:
+  - Build
+  - Test
+  - Publish
+  condition: always() # This ensures the notification is sent regardless of success or failure
+  steps:
+  - task: SendEmail@1
+    inputs:
+      to: 'yossizxc@gmail.com'
+      subject: 'Build $(Build.BuildNumber) - $(Build.Status)'
+      body: |
+        The build $(Build.BuildNumber) completed with status $(Build.Status).
+        Please check the pipeline for more details.
+    displayName: 'Send Email Notification'
+
+  
