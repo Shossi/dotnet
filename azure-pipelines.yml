@@ -65,7 +65,9 @@ jobs:
 
 - job: Publish
   displayName: 'Publish job'
-  dependsOn: Build
+  dependsOn:
+  - Build
+  - Test
   variables:
     BRANCH_NAME: $[ dependencies.Build.outputs['SetVariables.BRANCH_NAME'] ]
     VERSION: $[ dependencies.Build.outputs['SetVariables.VERSION'] ]
